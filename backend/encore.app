@@ -1,0 +1,1 @@
+{"id": "livestock-management-system-xcsi", "lang": "typescript"}
