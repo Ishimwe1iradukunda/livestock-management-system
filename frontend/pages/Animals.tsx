@@ -21,8 +21,8 @@ export default function Animals() {
     queryKey: ["animals", speciesFilter, statusFilter],
     queryFn: () =>
       backend.animals.list({
-        species: speciesFilter || undefined,
-        status: statusFilter || undefined,
+        species: speciesFilter && speciesFilter !== "all" ? speciesFilter : undefined,
+        status: statusFilter && statusFilter !== "all" ? statusFilter : undefined,
         limit: 100,
       }),
   });
@@ -111,7 +111,7 @@ export default function Animals() {
             <SelectValue placeholder="Filter by species" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All species</SelectItem>
+            <SelectItem value="all">All species</SelectItem>
             <SelectItem value="cattle">Cattle</SelectItem>
             <SelectItem value="sheep">Sheep</SelectItem>
             <SelectItem value="goat">Goat</SelectItem>

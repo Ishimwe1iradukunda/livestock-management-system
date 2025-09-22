@@ -46,21 +46,32 @@ export const getAlerts = api<AlertsRequest, AlertsResponse>(
     let alertId = 1;
 
     // Check for low stock feeds
-    const lowStockFeeds = await db.queryAll<{
+    let lowStockFeeds: {
       id: number;
       name: string;
       quantity_on_hand: number;
       reorder_level: number;
-    }>`
-      SELECT f.id, f.name, 
-             COALESCE(fi.quantity_on_hand, 0) as quantity_on_hand,
-             COALESCE(fi.reorder_level, 0) as reorder_level
-      FROM feeds f 
-      LEFT JOIN feed_inventory fi ON f.id = fi.feed_id 
-      WHERE COALESCE(fi.quantity_on_hand, 0) <= COALESCE(fi.reorder_level, 0) 
-      AND fi.reorder_level > 0
-      AND f.is_active = true
-    `;
+    }[] = [];
+    
+    try {
+      lowStockFeeds = await db.queryAll<{
+        id: number;
+        name: string;
+        quantity_on_hand: number;
+        reorder_level: number;
+      }>`
+        SELECT f.id, f.name, 
+               COALESCE(fi.quantity_on_hand, 0) as quantity_on_hand,
+               COALESCE(fi.reorder_level, 0) as reorder_level
+        FROM feeds f 
+        LEFT JOIN feed_inventory fi ON f.id = fi.feed_id 
+        WHERE COALESCE(fi.quantity_on_hand, 0) <= COALESCE(fi.reorder_level, 0) 
+        AND fi.reorder_level > 0
+        AND f.is_active = true
+      `;
+    } catch (error) {
+      console.warn('Failed to get low stock feeds:', error);
+    }
 
     for (const feed of lowStockFeeds) {
       alerts.push({
@@ -77,21 +88,35 @@ export const getAlerts = api<AlertsRequest, AlertsResponse>(
     }
 
     // Check for upcoming health tasks
-    const upcomingHealth = await db.queryAll<{
+    let upcomingHealth: {
       id: number;
       animal_id: number;
       treatment_type: string;
       next_due_date: Date;
       animal_name: string;
       tag_number: string;
-    }>`
-      SELECT hr.id, hr.animal_id, hr.treatment_type, hr.next_due_date,
-             a.name as animal_name, a.tag_number
-      FROM health_records hr
-      JOIN animals a ON hr.animal_id = a.id
-      WHERE hr.next_due_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
-      ORDER BY hr.next_due_date ASC
-    `;
+    }[] = [];
+    
+    try {
+      upcomingHealth = await db.queryAll<{
+        id: number;
+        animal_id: number;
+        treatment_type: string;
+        next_due_date: Date;
+        animal_name: string;
+        tag_number: string;
+      }>`
+        SELECT hr.id, hr.animal_id, hr.record_type as treatment_type, hr.next_due_date,
+               a.name as animal_name, a.tag_number
+        FROM health_records hr
+        JOIN animals a ON hr.animal_id = a.id
+        WHERE hr.next_due_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
+        AND hr.next_due_date IS NOT NULL
+        ORDER BY hr.next_due_date ASC
+      `;
+    } catch (error) {
+      console.warn('Failed to get upcoming health tasks:', error);
+    }
 
     for (const health of upcomingHealth) {
       const daysUntilDue = Math.ceil((health.next_due_date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -109,18 +134,30 @@ export const getAlerts = api<AlertsRequest, AlertsResponse>(
     }
 
     // Check for animals with critical status
-    const criticalAnimals = await db.queryAll<{
+    let criticalAnimals: {
       id: number;
       name: string;
       tag_number: string;
       status: string;
       updated_at: Date;
-    }>`
-      SELECT id, name, tag_number, status, updated_at
-      FROM animals 
-      WHERE status IN ('quarantine', 'deceased') 
-      AND updated_at >= CURRENT_DATE - INTERVAL '7 days'
-    `;
+    }[] = [];
+    
+    try {
+      criticalAnimals = await db.queryAll<{
+        id: number;
+        name: string;
+        tag_number: string;
+        status: string;
+        updated_at: Date;
+      }>`
+        SELECT id, name, tag_number, status, updated_at
+        FROM animals 
+        WHERE status IN ('quarantine', 'deceased') 
+        AND updated_at >= CURRENT_DATE - INTERVAL '7 days'
+      `;
+    } catch (error) {
+      console.warn('Failed to get critical animals:', error);
+    }
 
     for (const animal of criticalAnimals) {
       alerts.push({

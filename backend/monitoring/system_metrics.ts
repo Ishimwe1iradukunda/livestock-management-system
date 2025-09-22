@@ -38,35 +38,55 @@ export const getSystemMetrics = api<MetricsRequest, SystemMetrics>(
     const timeRange = req.timeRange || "24h";
     
     // Get record counts
-    const animalCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM animals`;
-    const healthCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM health_records`;
-    const feedingCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM feeding_records`;
-    const productionCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM production_records`;
-    const financialCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM financial_records`;
-    const feedsCount = await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM feeds`;
+    const animalCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM animals`) || { count: 0 };
+    const healthCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM health_records`) || { count: 0 };
+    const feedingCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM feeding_records`) || { count: 0 };
+    const productionCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM production_records`) || { count: 0 };
+    const financialCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM financial_records`) || { count: 0 };
+    const feedsCount = (await db.queryRow<{ count: number }>`SELECT COUNT(*) as count FROM feeds`) || { count: 0 };
 
     // Calculate alerts
-    const lowStockFeeds = await db.queryRow<{ count: number }>`
-      SELECT COUNT(*) as count 
-      FROM feeds f 
-      LEFT JOIN feed_inventory fi ON f.id = fi.feed_id 
-      WHERE COALESCE(fi.quantity_on_hand, 0) <= COALESCE(fi.reorder_level, 0) 
-      AND fi.reorder_level > 0
-    `;
+    let lowStockFeeds = { count: 0 };
+    try {
+      const result = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*) as count 
+        FROM feeds f 
+        LEFT JOIN feed_inventory fi ON f.id = fi.feed_id 
+        WHERE COALESCE(fi.quantity_on_hand, 0) <= COALESCE(fi.reorder_level, 0) 
+        AND fi.reorder_level > 0
+        AND f.is_active = true
+      `;
+      lowStockFeeds = result || { count: 0 };
+    } catch (error) {
+      console.warn('Failed to get low stock feeds count:', error);
+    }
 
-    const upcomingHealthTasks = await db.queryRow<{ count: number }>`
-      SELECT COUNT(*) as count 
-      FROM health_records 
-      WHERE next_due_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
-    `;
+    let upcomingHealthTasks = { count: 0 };
+    try {
+      const result = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*) as count 
+        FROM health_records 
+        WHERE next_due_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'
+        AND next_due_date IS NOT NULL
+      `;
+      upcomingHealthTasks = result || { count: 0 };
+    } catch (error) {
+      console.warn('Failed to get upcoming health tasks count:', error);
+    }
 
     // Critical events (animals in quarantine or deceased in last 7 days)
-    const criticalEvents = await db.queryRow<{ count: number }>`
-      SELECT COUNT(*) as count 
-      FROM animals 
-      WHERE status IN ('quarantine', 'deceased') 
-      AND updated_at >= CURRENT_DATE - INTERVAL '7 days'
-    `;
+    let criticalEvents = { count: 0 };
+    try {
+      const result = await db.queryRow<{ count: number }>`
+        SELECT COUNT(*) as count 
+        FROM animals 
+        WHERE status IN ('quarantine', 'deceased') 
+        AND updated_at >= CURRENT_DATE - INTERVAL '7 days'
+      `;
+      criticalEvents = result || { count: 0 };
+    } catch (error) {
+      console.warn('Failed to get critical events count:', error);
+    }
 
     return {
       timestamp: new Date(),

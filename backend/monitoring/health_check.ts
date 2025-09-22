@@ -52,31 +52,36 @@ export const healthCheck = api<void, HealthStatus>(
 
     try {
       await db.queryRow`SELECT COUNT(*) FROM animals LIMIT 1`;
-    } catch {
+    } catch (error) {
+      console.warn('Animals table check failed:', error);
       services.animals = false;
     }
 
     try {
       await db.queryRow`SELECT COUNT(*) FROM feeds LIMIT 1`;
-    } catch {
+    } catch (error) {
+      console.warn('Feeds table check failed:', error);
       services.feeds = false;
     }
 
     try {
       await db.queryRow`SELECT COUNT(*) FROM health_records LIMIT 1`;
-    } catch {
+    } catch (error) {
+      console.warn('Health records table check failed:', error);
       services.health = false;
     }
 
     try {
       await db.queryRow`SELECT COUNT(*) FROM production_records LIMIT 1`;
-    } catch {
+    } catch (error) {
+      console.warn('Production records table check failed:', error);
       services.production = false;
     }
 
     try {
       await db.queryRow`SELECT COUNT(*) FROM financial_records LIMIT 1`;
-    } catch {
+    } catch (error) {
+      console.warn('Financial records table check failed:', error);
       services.financial = false;
     }
 
