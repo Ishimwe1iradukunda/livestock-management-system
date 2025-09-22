@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AlertsSidebar from "./AlertsSidebar";
 import AdvancedDataEntry from "./AdvancedDataEntry";
+import NotificationCenter from "./NotificationCenter";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -85,8 +86,12 @@ export default function Layout({ children }: LayoutProps) {
       {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 py-8">
-          <div className="flex h-16 shrink-0 items-center">
+          <div className="flex h-16 shrink-0 items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">LivestockMS</h1>
+            <div className="flex items-center gap-2">
+              <NotificationCenter />
+              <AlertsSidebar />
+            </div>
           </div>
           <NavContent />
         </div>
@@ -112,6 +117,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex-1">
             <h1 className="text-xl font-semibold text-foreground">LivestockMS</h1>
           </div>
+          <NotificationCenter />
           <AlertsSidebar />
         </div>
       </div>

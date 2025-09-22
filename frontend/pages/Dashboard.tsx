@@ -9,6 +9,7 @@ import backend from "~backend/client";
 import MonitoringDashboard from "../components/MonitoringDashboard";
 import FinancialDashboard from "../components/FinancialDashboard";
 import StatisticsOverview from "../components/StatisticsOverview";
+import AdvancedAnalyticsDashboard from "../components/AdvancedAnalyticsDashboard";
 import AdvancedDataEntry from "../components/AdvancedDataEntry";
 
 export default function Dashboard() {
@@ -69,7 +70,7 @@ export default function Dashboard() {
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
           <TabsTrigger value="financial">Financial</TabsTrigger>
           <TabsTrigger value="statistics">Statistics</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="analytics">Advanced</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -193,37 +194,7 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="analytics">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
-                  Advanced Analytics
-                </CardTitle>
-                <CardDescription>
-                  Comprehensive data analysis and insights for your livestock operation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Card className="p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <BarChart className="h-5 w-5 text-blue-500" />
-                      <h3 className="font-semibold">Performance Trends</h3>
-                    </div>
-                    <StatisticsOverview />
-                  </Card>
-                  <Card className="p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <DollarSign className="h-5 w-5 text-green-500" />
-                      <h3 className="font-semibold">Financial Analysis</h3>
-                    </div>
-                    <FinancialDashboard timeRange="90" />
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <AdvancedAnalyticsDashboard />
         </TabsContent>
       </Tabs>
     </div>

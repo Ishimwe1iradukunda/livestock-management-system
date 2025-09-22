@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Filter } from "lucide-react";
 import backend from "~backend/client";
 import AnimalForm from "../components/AnimalForm";
+import AnimalDetailsModal from "../components/AnimalDetailsModal";
 import type { Animal } from "~backend/animals/create";
 
 export default function Animals() {
   const [showForm, setShowForm] = useState(false);
-  const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
+  const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [speciesFilter, setSpeciesFilter] = useState<string>("");
@@ -54,25 +56,31 @@ export default function Animals() {
 
   const handleFormSuccess = () => {
     setShowForm(false);
-    setEditingAnimal(null);
     refetch();
   };
 
-  if (showForm || editingAnimal) {
+  const handleAnimalClick = (animal: Animal) => {
+    setSelectedAnimal(animal);
+    setShowDetailsModal(true);
+  };
+
+  const handleDetailsUpdate = () => {
+    refetch();
+  };
+
+  if (showForm) {
     return (
       <AnimalForm
-        animal={editingAnimal}
+        animal={null}
         onSuccess={handleFormSuccess}
-        onCancel={() => {
-          setShowForm(false);
-          setEditingAnimal(null);
-        }}
+        onCancel={() => setShowForm(false)}
       />
     );
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Animals</h1>
@@ -144,7 +152,7 @@ export default function Animals() {
             <Card
               key={animal.id}
               className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setEditingAnimal(animal)}
+              onClick={() => handleAnimalClick(animal)}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -201,6 +209,17 @@ export default function Animals() {
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+
+      <AnimalDetailsModal
+        animal={selectedAnimal}
+        isOpen={showDetailsModal}
+        onClose={() => {
+          setShowDetailsModal(false);
+          setSelectedAnimal(null);
+        }}
+        onUpdate={handleDetailsUpdate}
+      />
+    </>
   );
 }
