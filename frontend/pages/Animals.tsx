@@ -99,7 +99,7 @@ export default function Animals() {
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All statuses</SelectItem>
+            <SelectItem value="all">All statuses</SelectItem>
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="sold">Sold</SelectItem>
             <SelectItem value="deceased">Deceased</SelectItem>

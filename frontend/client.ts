@@ -40,6 +40,7 @@ export class Client {
     public readonly feeds: feeds.ServiceClient
     public readonly financial: financial.ServiceClient
     public readonly health: health.ServiceClient
+    public readonly monitoring: monitoring.ServiceClient
     public readonly production: production.ServiceClient
     public readonly reports: reports.ServiceClient
     private readonly options: ClientOptions
@@ -63,6 +64,7 @@ export class Client {
         this.feeds = new feeds.ServiceClient(base)
         this.financial = new financial.ServiceClient(base)
         this.health = new health.ServiceClient(base)
+        this.monitoring = new monitoring.ServiceClient(base)
         this.production = new production.ServiceClient(base)
         this.reports = new reports.ServiceClient(base)
     }
@@ -485,6 +487,102 @@ export namespace health {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/health`, {query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_health_list_list>
+        }
+    }
+}
+
+/**
+ * Import the endpoint handlers to derive the types for the client.
+ */
+import { getAlerts as api_monitoring_alerts_getAlerts } from "~backend/monitoring/alerts";
+import {
+    getLogs as api_monitoring_error_logging_getLogs,
+    logError as api_monitoring_error_logging_logError
+} from "~backend/monitoring/error_logging";
+import { healthCheck as api_monitoring_health_check_healthCheck } from "~backend/monitoring/health_check";
+import { getSystemMetrics as api_monitoring_system_metrics_getSystemMetrics } from "~backend/monitoring/system_metrics";
+
+export namespace monitoring {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.getAlerts = this.getAlerts.bind(this)
+            this.getLogs = this.getLogs.bind(this)
+            this.getSystemMetrics = this.getSystemMetrics.bind(this)
+            this.healthCheck = this.healthCheck.bind(this)
+            this.logError = this.logError.bind(this)
+        }
+
+        /**
+         * Get system alerts and warnings
+         */
+        public async getAlerts(params: RequestType<typeof api_monitoring_alerts_getAlerts>): Promise<ResponseType<typeof api_monitoring_alerts_getAlerts>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                acknowledged: params.acknowledged === undefined ? undefined : String(params.acknowledged),
+                limit:        params.limit === undefined ? undefined : String(params.limit),
+                offset:       params.offset === undefined ? undefined : String(params.offset),
+                severity:     params.severity,
+                type:         params.type,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/monitoring/alerts`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_monitoring_alerts_getAlerts>
+        }
+
+        /**
+         * Retrieve error logs with filtering
+         */
+        public async getLogs(params: RequestType<typeof api_monitoring_error_logging_getLogs>): Promise<ResponseType<typeof api_monitoring_error_logging_getLogs>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                endTime:   params.endTime,
+                level:     params.level,
+                limit:     params.limit === undefined ? undefined : String(params.limit),
+                offset:    params.offset === undefined ? undefined : String(params.offset),
+                service:   params.service,
+                startTime: params.startTime,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/monitoring/logs`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_monitoring_error_logging_getLogs>
+        }
+
+        /**
+         * Get comprehensive system metrics
+         */
+        public async getSystemMetrics(params: RequestType<typeof api_monitoring_system_metrics_getSystemMetrics>): Promise<ResponseType<typeof api_monitoring_system_metrics_getSystemMetrics>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                timeRange: params.timeRange,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/monitoring/metrics`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_monitoring_system_metrics_getSystemMetrics>
+        }
+
+        /**
+         * Health check endpoint for monitoring system status
+         */
+        public async healthCheck(): Promise<ResponseType<typeof api_monitoring_health_check_healthCheck>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/monitoring/health`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_monitoring_health_check_healthCheck>
+        }
+
+        /**
+         * Log an error or event
+         */
+        public async logError(params: RequestType<typeof api_monitoring_error_logging_logError>): Promise<ResponseType<typeof api_monitoring_error_logging_logError>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/monitoring/logs`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_monitoring_error_logging_logError>
         }
     }
 }

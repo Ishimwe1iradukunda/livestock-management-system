@@ -147,7 +147,7 @@ export default function Feeds() {
                 <SelectValue placeholder="Filter by type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All types</SelectItem>
+                <SelectItem value="all">All types</SelectItem>
                 <SelectItem value="hay">Hay</SelectItem>
                 <SelectItem value="grain">Grain</SelectItem>
                 <SelectItem value="pellets">Pellets</SelectItem>

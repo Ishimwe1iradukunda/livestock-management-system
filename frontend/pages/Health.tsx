@@ -86,7 +86,7 @@ export default function Health() {
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All types</SelectItem>
+            <SelectItem value="all">All types</SelectItem>
             <SelectItem value="vaccination">Vaccination</SelectItem>
             <SelectItem value="treatment">Treatment</SelectItem>
             <SelectItem value="checkup">Checkup</SelectItem>

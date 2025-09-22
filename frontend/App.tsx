@@ -9,6 +9,7 @@ import Feeds from "./pages/Feeds";
 import Health from "./pages/Health";
 import Production from "./pages/Production";
 import Financial from "./pages/Financial";
+import SystemMonitoringDashboard from "./components/SystemMonitoringDashboard";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -34,6 +35,7 @@ function AppInner() {
               <Route path="/health" element={<Health />} />
               <Route path="/production" element={<Production />} />
               <Route path="/financial" element={<Financial />} />
+              <Route path="/monitoring" element={<SystemMonitoringDashboard />} />
             </Routes>
           </ErrorBoundary>
         </Layout>

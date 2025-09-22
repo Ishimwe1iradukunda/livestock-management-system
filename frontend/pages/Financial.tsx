@@ -105,7 +105,7 @@ export default function Financial() {
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All transactions</SelectItem>
+            <SelectItem value="all">All transactions</SelectItem>
             <SelectItem value="income">Income</SelectItem>
             <SelectItem value="expense">Expense</SelectItem>
           </SelectContent>

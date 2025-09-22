@@ -193,7 +193,7 @@ export default function StatisticsOverview() {
               <SelectValue placeholder="All species" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All species</SelectItem>
+              <SelectItem value="all">All species</SelectItem>
               <SelectItem value="cattle">Cattle</SelectItem>
               <SelectItem value="sheep">Sheep</SelectItem>
               <SelectItem value="goat">Goat</SelectItem>

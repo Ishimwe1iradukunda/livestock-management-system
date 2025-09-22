@@ -190,7 +190,7 @@ export default function FinancialRecordForm({ onSuccess, onCancel }: FinancialRe
                     <SelectValue placeholder="Select animal (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No specific animal</SelectItem>
+                    <SelectItem value="none">No specific animal</SelectItem>
                     {animalsData?.animals?.map((animal) => (
                       <SelectItem key={animal.id} value={animal.id.toString()}>
                         #{animal.tagNumber} - {animal.name || "Unnamed"} ({animal.species})

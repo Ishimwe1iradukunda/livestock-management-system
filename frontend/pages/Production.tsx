@@ -66,7 +66,7 @@ export default function Production() {
             <SelectValue placeholder="Filter by product" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All products</SelectItem>
+            <SelectItem value="all">All products</SelectItem>
             <SelectItem value="milk">Milk</SelectItem>
             <SelectItem value="eggs">Eggs</SelectItem>
             <SelectItem value="wool">Wool</SelectItem>

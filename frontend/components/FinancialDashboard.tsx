@@ -145,7 +145,7 @@ export default function FinancialDashboard({ timeRange: initialTimeRange }: Fina
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All categories</SelectItem>
+              <SelectItem value="all">All categories</SelectItem>
               <SelectItem value="feed">Feed</SelectItem>
               <SelectItem value="health">Health</SelectItem>
               <SelectItem value="equipment">Equipment</SelectItem>

@@ -10,7 +10,8 @@ import {
   Package,
   X,
   Plus,
-  BarChart3
+  BarChart3,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -28,6 +29,7 @@ const navigation = [
   { name: "Health", href: "/health", icon: Heart },
   { name: "Production", href: "/production", icon: TrendingUp },
   { name: "Financial", href: "/financial", icon: DollarSign },
+  { name: "Monitoring", href: "/monitoring", icon: Activity },
 ];
 
 export default function Layout({ children }: LayoutProps) {

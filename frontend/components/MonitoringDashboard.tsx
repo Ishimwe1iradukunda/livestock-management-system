@@ -96,7 +96,7 @@ export default function MonitoringDashboard({ animalId }: MonitoringDashboardPro
                 <SelectValue placeholder="Select animal" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All animals</SelectItem>
+                <SelectItem value="all">All animals</SelectItem>
                 {animalsData?.animals.map((animal) => (
                   <SelectItem key={animal.id} value={animal.id.toString()}>
                     #{animal.tagNumber} - {animal.name || "Unnamed"}

@@ -155,7 +155,7 @@ export default function FeedingRecordForm({ animalId, onSuccess, onCancel }: Fee
                     <SelectValue placeholder="Select feed (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Custom Feed Type</SelectItem>
+                    <SelectItem value="custom">Custom Feed Type</SelectItem>
                     {feedsData?.feeds.map((feed) => (
                       <SelectItem key={feed.id} value={feed.id.toString()}>
                         {feed.name} ({feed.type}) - {feed.quantityOnHand} {feed.unit} available
