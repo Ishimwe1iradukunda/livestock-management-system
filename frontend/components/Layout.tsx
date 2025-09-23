@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Menu,
   Home,
@@ -11,10 +12,22 @@ import {
   X,
   Plus,
   BarChart3,
-  Activity
+  Activity,
+  Users,
+  LogOut,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import AlertsSidebar from "./AlertsSidebar";
 import AdvancedDataEntry from "./AdvancedDataEntry";
 import NotificationCenter from "./NotificationCenter";
@@ -34,6 +47,7 @@ const navigation = [
 ];
 
 export default function Layout({ children }: LayoutProps) {
+  const { user, logout, isAdmin } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDataEntry, setShowDataEntry] = useState(false);
@@ -43,6 +57,10 @@ export default function Layout({ children }: LayoutProps) {
       return location.pathname === "/";
     }
     return location.pathname.startsWith(href);
+  };
+
+  const handleLogout = async () => {
+    await logout();
   };
 
   const NavContent = () => (
@@ -68,6 +86,21 @@ export default function Layout({ children }: LayoutProps) {
         );
       })}
       
+      {isAdmin && (
+        <Link
+          to="/users"
+          onClick={() => setIsMobileMenuOpen(false)}
+          className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+            isActivePath("/users")
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          }`}
+        >
+          <Users className="h-5 w-5" />
+          <span>User Management</span>
+        </Link>
+      )}
+      
       <div className="pt-4 border-t border-border">
         <Button 
           onClick={() => setShowDataEntry(true)}
@@ -91,6 +124,32 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center gap-2">
               <NotificationCenter />
               <AlertsSidebar />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <User className="h-4 w-4" />
+                    {isAdmin && (
+                      <Badge className="absolute -top-1 -right-1 h-3 w-3 rounded-full p-0 bg-purple-600" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium">{user?.fullName}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email}</p>
+                      <Badge className="w-fit text-xs" variant={isAdmin ? "default" : "secondary"}>
+                        {user?.role}
+                      </Badge>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
           <NavContent />
@@ -119,6 +178,32 @@ export default function Layout({ children }: LayoutProps) {
           </div>
           <NotificationCenter />
           <AlertsSidebar />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative">
+                <User className="h-4 w-4" />
+                {isAdmin && (
+                  <Badge className="absolute -top-1 -right-1 h-3 w-3 rounded-full p-0 bg-purple-600" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium">{user?.fullName}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <Badge className="w-fit text-xs" variant={isAdmin ? "default" : "secondary"}>
+                    {user?.role}
+                  </Badge>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
