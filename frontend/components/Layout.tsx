@@ -18,8 +18,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AlertsSidebar from "./AlertsSidebar";
 import AdvancedDataEntry from "./AdvancedDataEntry";
 import NotificationCenter from "./NotificationCenter";
-import Breadcrumbs from "./Breadcrumbs";
-import InternalLink from "./InternalLinkHelper";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -89,14 +87,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 py-8">
           <div className="flex h-16 shrink-0 items-center justify-between">
-            <InternalLink 
-              to="/" 
-              variant="nav"
-              className="text-2xl font-bold text-foreground hover:text-primary transition-colors no-underline"
-              title="Go to Dashboard - Livestock Management System"
-            >
-              LivestockMS
-            </InternalLink>
+            <h1 className="text-2xl font-bold text-foreground">LivestockMS</h1>
             <div className="flex items-center gap-2">
               <NotificationCenter />
               <AlertsSidebar />
@@ -124,14 +115,7 @@ export default function Layout({ children }: LayoutProps) {
             </SheetContent>
           </Sheet>
           <div className="flex-1">
-            <InternalLink 
-              to="/" 
-              variant="nav"
-              className="text-xl font-semibold text-foreground hover:text-primary transition-colors no-underline"
-              title="Go to Dashboard - Livestock Management System"
-            >
-              LivestockMS
-            </InternalLink>
+            <h1 className="text-xl font-semibold text-foreground">LivestockMS</h1>
           </div>
           <NotificationCenter />
           <AlertsSidebar />
@@ -141,7 +125,6 @@ export default function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       <main className="lg:pl-72">
         <div className="px-4 py-8 sm:px-6 lg:px-8">
-          <Breadcrumbs />
           {showDataEntry ? (
             <AdvancedDataEntry onClose={() => setShowDataEntry(false)} />
           ) : (
