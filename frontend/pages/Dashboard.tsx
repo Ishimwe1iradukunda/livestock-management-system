@@ -11,6 +11,8 @@ import FinancialDashboard from "../components/FinancialDashboard";
 import StatisticsOverview from "../components/StatisticsOverview";
 import AdvancedAnalyticsDashboard from "../components/AdvancedAnalyticsDashboard";
 import AdvancedDataEntry from "../components/AdvancedDataEntry";
+import RelatedLinks, { QuickActionLinks } from "../components/RelatedLinks";
+import InternalLink from "../components/InternalLinkHelper";
 
 export default function Dashboard() {
   const [showDataEntry, setShowDataEntry] = useState(false);
@@ -75,6 +77,15 @@ export default function Dashboard() {
 
         <TabsContent value="overview" className="space-y-6">
 
+          {/* Quick Actions Section */}
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground mb-2">Quick Actions</h2>
+              <p className="text-muted-foreground text-sm">Common tasks to get you started</p>
+            </div>
+            <QuickActionLinks />
+          </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -84,7 +95,9 @@ export default function Dashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{stats?.totalAnimals || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {stats?.activeAnimals || 0} active animals
+              <InternalLink to="/animals" variant="subtle" className="hover:underline">
+                {stats?.activeAnimals || 0} active animals
+              </InternalLink>
             </p>
           </CardContent>
         </Card>
@@ -96,7 +109,11 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.recentHealthRecords || 0}</div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
+            <p className="text-xs text-muted-foreground">
+              <InternalLink to="/health" variant="subtle" className="hover:underline">
+                Last 30 days
+              </InternalLink>
+            </p>
           </CardContent>
         </Card>
 
@@ -107,7 +124,11 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.totalProduction || 0}</div>
-            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-xs text-muted-foreground">
+              <InternalLink to="/production" variant="subtle" className="hover:underline">
+                This month
+              </InternalLink>
+            </p>
           </CardContent>
         </Card>
 
@@ -120,12 +141,18 @@ export default function Dashboard() {
             <div className={`text-2xl font-bold ${(stats?.netProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(stats?.netProfit || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-xs text-muted-foreground">
+              <InternalLink to="/financial" variant="subtle" className="hover:underline">
+                This month
+              </InternalLink>
+            </p>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
+        <RelatedLinks currentPage="dashboard" title="Explore Your Farm Data" />
+        
         <Card>
           <CardHeader>
             <CardTitle>Monthly Financial Summary</CardTitle>
@@ -135,13 +162,17 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Income</span>
               <span className="text-green-600 font-semibold">
-                {formatCurrency(stats?.monthlyIncome || 0)}
+                <InternalLink to="/financial?type=income" variant="subtle" className="hover:underline">
+                  {formatCurrency(stats?.monthlyIncome || 0)}
+                </InternalLink>
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Expenses</span>
               <span className="text-red-600 font-semibold">
-                {formatCurrency(stats?.monthlyExpenses || 0)}
+                <InternalLink to="/financial?type=expense" variant="subtle" className="hover:underline">
+                  {formatCurrency(stats?.monthlyExpenses || 0)}
+                </InternalLink>
               </span>
             </div>
             <div className="border-t pt-4">
@@ -152,30 +183,6 @@ export default function Dashboard() {
                 </span>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-              Upcoming Health Tasks
-            </CardTitle>
-            <CardDescription>Health records due in the next 30 days</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-amber-600 mb-2">
-              {stats?.upcomingHealthTasks || 0}
-            </div>
-            {(stats?.upcomingHealthTasks || 0) > 0 ? (
-              <Badge variant="outline" className="text-amber-600 border-amber-600">
-                Action Required
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-green-600 border-green-600">
-                All Up to Date
-              </Badge>
-            )}
           </CardContent>
         </Card>
       </div>
