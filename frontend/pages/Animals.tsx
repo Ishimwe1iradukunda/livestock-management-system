@@ -8,15 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Search, Filter } from "lucide-react";
 import backend from "~backend/client";
 import AnimalForm from "../components/AnimalForm";
-import AnimalDetailsModal from "../components/AnimalDetailsModal";
 import type { Animal } from "~backend/animals/create";
-import RelatedLinks from "../components/RelatedLinks";
-import InternalLink from "../components/InternalLinkHelper";
 
 export default function Animals() {
   const [showForm, setShowForm] = useState(false);
-  const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [speciesFilter, setSpeciesFilter] = useState<string>("");
@@ -58,37 +54,29 @@ export default function Animals() {
 
   const handleFormSuccess = () => {
     setShowForm(false);
+    setEditingAnimal(null);
     refetch();
   };
 
-  const handleAnimalClick = (animal: Animal) => {
-    setSelectedAnimal(animal);
-    setShowDetailsModal(true);
-  };
-
-  const handleDetailsUpdate = () => {
-    refetch();
-  };
-
-  if (showForm) {
+  if (showForm || editingAnimal) {
     return (
       <AnimalForm
-        animal={null}
+        animal={editingAnimal}
         onSuccess={handleFormSuccess}
-        onCancel={() => setShowForm(false)}
+        onCancel={() => {
+          setShowForm(false);
+          setEditingAnimal(null);
+        }}
       />
     );
   }
 
   return (
-    <>
-      <div className="space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Animals</h1>
-          <p className="text-muted-foreground">
-            Manage your livestock inventory and track individual animal performance
-          </p>
+          <p className="text-muted-foreground">Manage your livestock inventory</p>
         </div>
         <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -133,9 +121,6 @@ export default function Animals() {
         </Select>
       </div>
 
-      {/* Related Links Section */}
-      <RelatedLinks currentPage="animals" className="lg:hidden" />
-
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
@@ -154,61 +139,52 @@ export default function Animals() {
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-4">
-          <div className="lg:col-span-3">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredAnimals.map((animal) => (
-                <Card
-                  key={animal.id}
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => handleAnimalClick(animal)}
-                >
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">#{animal.tagNumber}</CardTitle>
-                      <Badge className={getStatusColor(animal.status)}>
-                        {animal.status}
-                      </Badge>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredAnimals.map((animal) => (
+            <Card
+              key={animal.id}
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setEditingAnimal(animal)}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">#{animal.tagNumber}</CardTitle>
+                  <Badge className={getStatusColor(animal.status)}>
+                    {animal.status}
+                  </Badge>
+                </div>
+                <CardDescription>
+                  {animal.name || "Unnamed"} • {animal.species}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  {animal.breed && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Breed:</span>
+                      <span>{animal.breed}</span>
                     </div>
-                    <CardDescription>
-                      {animal.name || "Unnamed"} • {animal.species}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      {animal.breed && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Breed:</span>
-                          <span>{animal.breed}</span>
-                        </div>
-                      )}
-                      {animal.gender && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Gender:</span>
-                          <span className="capitalize">{animal.gender}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Birth Date:</span>
-                        <span>{formatDate(animal.birthDate)}</span>
-                      </div>
-                      {animal.weight && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Weight:</span>
-                          <span>{animal.weight} kg</span>
-                        </div>
-                      )}
+                  )}
+                  {animal.gender && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Gender:</span>
+                      <span className="capitalize">{animal.gender}</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-          
-          {/* Sidebar with related links */}
-          <div className="hidden lg:block">
-            <RelatedLinks currentPage="animals" />
-          </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Birth Date:</span>
+                    <span>{formatDate(animal.birthDate)}</span>
+                  </div>
+                  {animal.weight && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Weight:</span>
+                      <span>{animal.weight} kg</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
 
@@ -220,33 +196,11 @@ export default function Animals() {
             <p className="text-muted-foreground text-center">
               {searchTerm || statusFilter || speciesFilter
                 ? "Try adjusting your search criteria"
-                : <>
-                    Get started by adding your first animal. You can also explore{" "}
-                    <InternalLink to="/feeds" variant="default">
-                      feed management
-                    </InternalLink>{" "}
-                    or{" "}
-                    <InternalLink to="/health" variant="default">
-                      health tracking
-                    </InternalLink>{" "}
-                    features.
-                  </>
-              }
+                : "Get started by adding your first animal"}
             </p>
           </CardContent>
         </Card>
       )}
-      </div>
-
-      <AnimalDetailsModal
-        animal={selectedAnimal}
-        isOpen={showDetailsModal}
-        onClose={() => {
-          setShowDetailsModal(false);
-          setSelectedAnimal(null);
-        }}
-        onUpdate={handleDetailsUpdate}
-      />
-    </>
+    </div>
   );
 }
