@@ -16,14 +16,15 @@ import {
   Zap,
   Activity
 } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 interface MonitoringDashboardProps {
   animalId?: number;
 }
 
 export default function MonitoringDashboard({ animalId }: MonitoringDashboardProps) {
-  const [timeRange, setTimeRange] = useState("30"); // days
+  const backend = useBackend();
+  const [timeRange, setTimeRange] = useState("30");
   const [selectedAnimal, setSelectedAnimal] = useState(animalId?.toString() || "");
 
   const endDate = new Date();

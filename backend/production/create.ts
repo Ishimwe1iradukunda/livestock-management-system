@@ -28,7 +28,7 @@ export interface ProductionRecord {
 
 // Creates a new production record for an animal.
 export const create = api<CreateProductionRecordRequest, ProductionRecord>(
-  { expose: true, method: "POST", path: "/production" },
+  { auth: true, expose: true, method: "POST", path: "/production" },
   async (params) => {
     const pricePerUnit = params.pricePerUnit || 0;
     const totalValue = params.quantity * pricePerUnit;

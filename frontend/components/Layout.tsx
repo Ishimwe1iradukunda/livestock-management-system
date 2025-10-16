@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu,
   Home,
@@ -11,12 +11,15 @@ import {
   X,
   Plus,
   BarChart3,
-  Activity
+  Activity,
+  LogOut,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AlertsSidebar from "./AlertsSidebar";
 import AdvancedDataEntry from "./AdvancedDataEntry";
+import { useAuth } from "../contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,8 +37,15 @@ const navigation = [
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDataEntry, setShowDataEntry] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const isActivePath = (href: string) => {
     if (href === "/") {
@@ -67,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
         );
       })}
       
-      <div className="pt-4 border-t border-border">
+      <div className="pt-4 border-t border-border space-y-2">
         <Button 
           onClick={() => setShowDataEntry(true)}
           className="w-full justify-start space-x-3"
@@ -76,6 +86,21 @@ export default function Layout({ children }: LayoutProps) {
           <Plus className="h-5 w-5" />
           <span>Quick Add Data</span>
         </Button>
+        
+        <div className="pt-4 border-t border-border space-y-2">
+          <div className="flex items-center space-x-2 px-3 py-2 text-sm text-muted-foreground">
+            <User className="h-4 w-4" />
+            <span className="truncate">{user?.email}</span>
+          </div>
+          <Button
+            onClick={handleLogout}
+            className="w-full justify-start space-x-3"
+            variant="ghost"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Logout</span>
+          </Button>
+        </div>
       </div>
     </nav>
   );

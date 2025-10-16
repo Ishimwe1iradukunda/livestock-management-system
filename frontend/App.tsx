@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -10,6 +10,8 @@ import Health from "./pages/Health";
 import Production from "./pages/Production";
 import Financial from "./pages/Financial";
 import SystemMonitoringDashboard from "./components/SystemMonitoringDashboard";
+import Login from "./pages/Login";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -22,23 +24,47 @@ const queryClient = new QueryClient({
   },
 });
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function AppInner() {
   return (
     <Router>
       <ErrorBoundary>
-        <Layout>
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/animals" element={<Animals />} />
-              <Route path="/feeds" element={<Feeds />} />
-              <Route path="/health" element={<Health />} />
-              <Route path="/production" element={<Production />} />
-              <Route path="/financial" element={<Financial />} />
-              <Route path="/monitoring" element={<SystemMonitoringDashboard />} />
-            </Routes>
-          </ErrorBoundary>
-        </Layout>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <ErrorBoundary>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/animals" element={<Animals />} />
+                      <Route path="/feeds" element={<Feeds />} />
+                      <Route path="/health" element={<Health />} />
+                      <Route path="/production" element={<Production />} />
+                      <Route path="/financial" element={<Financial />} />
+                      <Route path="/monitoring" element={<SystemMonitoringDashboard />} />
+                    </Routes>
+                  </ErrorBoundary>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
         <Toaster />
       </ErrorBoundary>
     </Router>
@@ -48,7 +74,9 @@ function AppInner() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppInner />
+      <AuthProvider>
+        <AppInner />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

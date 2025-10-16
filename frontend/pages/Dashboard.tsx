@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PawPrint, Heart, TrendingUp, DollarSign, AlertTriangle, Plus, BarChart, Activity } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import MonitoringDashboard from "../components/MonitoringDashboard";
 import FinancialDashboard from "../components/FinancialDashboard";
 import StatisticsOverview from "../components/StatisticsOverview";
 import AdvancedDataEntry from "../components/AdvancedDataEntry";
 
 export default function Dashboard() {
+  const backend = useBackend();
   const [showDataEntry, setShowDataEntry] = useState(false);
 
   const { data: stats, isLoading } = useQuery({

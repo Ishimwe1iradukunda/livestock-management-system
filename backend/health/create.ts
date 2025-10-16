@@ -27,7 +27,7 @@ export interface HealthRecord {
 
 // Creates a new health record for an animal.
 export const create = api<CreateHealthRecordRequest, HealthRecord>(
-  { expose: true, method: "POST", path: "/health" },
+  { auth: true, expose: true, method: "POST", path: "/health" },
   async (params) => {
     const row = await db.queryRow<any>`
       INSERT INTO health_records (

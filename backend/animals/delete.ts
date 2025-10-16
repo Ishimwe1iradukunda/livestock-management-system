@@ -1,5 +1,6 @@
 import { api, APIError } from "encore.dev/api";
 import db from "../db";
+import { logAuditEvent } from "../utils/audit_logger";
 
 export interface DeleteAnimalRequest {
   id: number;
@@ -7,13 +8,24 @@ export interface DeleteAnimalRequest {
 
 // Deletes an animal record.
 export const deleteAnimal = api<DeleteAnimalRequest, void>(
-  { expose: true, method: "DELETE", path: "/animals/:id" },
+  { auth: true, expose: true, method: "DELETE", path: "/animals/:id" },
   async (params) => {
-    const result = await db.exec`
+    const existingAnimal = await db.queryRow<{ id: number }>`
+      SELECT id FROM animals WHERE id = ${params.id}
+    `;
+    
+    if (!existingAnimal) {
+      throw APIError.notFound("animal not found");
+    }
+    
+    await db.exec`
       DELETE FROM animals WHERE id = ${params.id}
     `;
     
-    // Note: SQLDatabase doesn't return affected rows count, so we'll assume success
-    // In a real implementation, you might want to check if the animal exists first
+    await logAuditEvent({
+      action: "delete_animal",
+      resourceType: "animal",
+      resourceId: params.id.toString(),
+    });
   }
 );

@@ -20,10 +20,11 @@ import {
   Calendar,
   Users
 } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 export default function AdvancedAnalyticsDashboard() {
-  const [timeRange, setTimeRange] = useState("365"); // days
+  const backend = useBackend();
+  const [timeRange, setTimeRange] = useState("365");
   const [species, setSpecies] = useState<string>("");
 
   const endDate = new Date();

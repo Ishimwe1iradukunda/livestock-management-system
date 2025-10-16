@@ -18,9 +18,10 @@ import {
   AlertCircle,
   CheckCircle
 } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 export default function StatisticsOverview() {
+  const backend = useBackend();
   const [timeRange, setTimeRange] = useState("30");
   const [species, setSpecies] = useState<string>("");
 

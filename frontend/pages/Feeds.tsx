@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search, Package, ShoppingCart, Utensils, AlertTriangle } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import FeedForm from "../components/FeedForm";
 import FeedPurchaseForm from "../components/FeedPurchaseForm";
 import FeedingRecordForm from "../components/FeedingRecordForm";
 
 export default function Feeds() {
+  const backend = useBackend();
   const [showFeedForm, setShowFeedForm] = useState(false);
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
   const [showFeedingForm, setShowFeedingForm] = useState(false);

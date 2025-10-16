@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Calendar, DollarSign } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import HealthRecordForm from "../components/HealthRecordForm";
 
 export default function Health() {
+  const backend = useBackend();
   const [showForm, setShowForm] = useState(false);
   const [recordTypeFilter, setRecordTypeFilter] = useState<string>("");
 

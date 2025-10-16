@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Save, Package } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 interface FeedPurchaseFormProps {
   onSuccess: () => void;
@@ -16,6 +16,7 @@ interface FeedPurchaseFormProps {
 }
 
 export default function FeedPurchaseForm({ onSuccess, onCancel }: FeedPurchaseFormProps) {
+  const backend = useBackend();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({

@@ -30,7 +30,7 @@ export interface FeedPurchase {
 
 // Records a feed purchase and updates inventory.
 export const purchase = api<CreateFeedPurchaseRequest, FeedPurchase>(
-  { expose: true, method: "POST", path: "/feeds/purchase" },
+  { auth: true, expose: true, method: "POST", path: "/feeds/purchase" },
   async (params) => {
     const totalCost = params.quantity * params.unitCost;
     

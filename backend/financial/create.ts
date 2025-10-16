@@ -29,7 +29,7 @@ export interface FinancialRecord {
 
 // Creates a new financial record.
 export const create = api<CreateFinancialRecordRequest, FinancialRecord>(
-  { expose: true, method: "POST", path: "/financial" },
+  { auth: true, expose: true, method: "POST", path: "/financial" },
   async (params) => {
     const row = await db.queryRow<any>`
       INSERT INTO financial_records (

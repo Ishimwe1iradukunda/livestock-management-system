@@ -18,7 +18,7 @@ import {
   Zap,
   Edit
 } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import type { Animal } from "~backend/animals/create";
 import AnimalForm from "./AnimalForm";
 
@@ -30,6 +30,7 @@ interface AnimalDetailsModalProps {
 }
 
 export default function AnimalDetailsModal({ animal, isOpen, onClose, onUpdate }: AnimalDetailsModalProps) {
+  const backend = useBackend();
   const [showEditForm, setShowEditForm] = useState(false);
 
   const { data: metrics, isLoading: metricsLoading } = useQuery({

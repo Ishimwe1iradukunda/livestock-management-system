@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 interface FinancialRecordFormProps {
   onSuccess: () => void;
@@ -16,6 +16,7 @@ interface FinancialRecordFormProps {
 }
 
 export default function FinancialRecordForm({ onSuccess, onCancel }: FinancialRecordFormProps) {
+  const backend = useBackend();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({

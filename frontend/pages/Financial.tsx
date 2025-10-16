@@ -5,10 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Calendar, DollarSign, TrendingUp, TrendingDown } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import FinancialRecordForm from "../components/FinancialRecordForm";
 
 export default function Financial() {
+  const backend = useBackend();
   const [showForm, setShowForm] = useState(false);
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<string>("");
 

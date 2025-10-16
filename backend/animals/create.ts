@@ -1,5 +1,7 @@
-import { api } from "encore.dev/api";
+import { api, APIError } from "encore.dev/api";
 import db from "../db";
+import { validateRequired } from "../utils/validation";
+import { logAuditEvent } from "../utils/audit_logger";
 
 export interface CreateAnimalRequest {
   tagNumber: string;
@@ -37,8 +39,11 @@ export interface Animal {
 
 // Creates a new animal record.
 export const create = api<CreateAnimalRequest, Animal>(
-  { expose: true, method: "POST", path: "/animals" },
+  { auth: true, expose: true, method: "POST", path: "/animals" },
   async (params) => {
+    validateRequired(params.tagNumber, "tagNumber");
+    validateRequired(params.species, "species");
+    
     const row = await db.queryRow<any>`
       INSERT INTO animals (
         tag_number, name, species, breed, birth_date, gender, 
@@ -51,8 +56,15 @@ export const create = api<CreateAnimalRequest, Animal>(
     `;
     
     if (!row) {
-      throw new Error("Failed to create animal");
+      throw APIError.internal("Failed to create animal");
     }
+    
+    await logAuditEvent({
+      action: "create_animal",
+      resourceType: "animal",
+      resourceId: row.id.toString(),
+      details: { tagNumber: params.tagNumber, species: params.species },
+    });
     
     return {
       id: row.id,

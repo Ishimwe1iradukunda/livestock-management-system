@@ -35,7 +35,7 @@ export interface Feed {
 
 // Creates a new feed type.
 export const create = api<CreateFeedRequest, Feed>(
-  { expose: true, method: "POST", path: "/feeds" },
+  { auth: true, expose: true, method: "POST", path: "/feeds" },
   async (params) => {
     const row = await db.queryRow<any>`
       INSERT INTO feeds (

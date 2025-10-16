@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import AnimalForm from "../components/AnimalForm";
 import type { Animal } from "~backend/animals/create";
 
 export default function Animals() {
+  const backend = useBackend();
   const [showForm, setShowForm] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<Animal | null>(null);
   const [searchTerm, setSearchTerm] = useState("");

@@ -13,9 +13,10 @@ import {
   ExternalLink
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 export default function AlertsSidebar() {
+  const backend = useBackend();
   const { data: alertsData, isLoading } = useQuery({
     queryKey: ["alerts"],
     queryFn: () => backend.alerts.getAlerts(),

@@ -16,13 +16,14 @@ import {
   CreditCard,
   Receipt
 } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 
 interface FinancialDashboardProps {
   timeRange?: string;
 }
 
 export default function FinancialDashboard({ timeRange: initialTimeRange }: FinancialDashboardProps) {
+  const backend = useBackend();
   const [timeRange, setTimeRange] = useState(initialTimeRange || "30");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
 

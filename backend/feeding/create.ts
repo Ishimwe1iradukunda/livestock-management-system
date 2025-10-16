@@ -29,7 +29,7 @@ export interface FeedingRecord {
 
 // Creates a new feeding record and calculates nutritional information.
 export const create = api<CreateFeedingRecordRequest, FeedingRecord>(
-  { expose: true, method: "POST", path: "/feeding" },
+  { auth: true, expose: true, method: "POST", path: "/feeding" },
   async (params) => {
     let feedInfo = null;
     let nutritionalValue = {};

@@ -5,10 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Calendar, TrendingUp } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import ProductionRecordForm from "../components/ProductionRecordForm";
 
 export default function Production() {
+  const backend = useBackend();
   const [showForm, setShowForm] = useState(false);
   const [productTypeFilter, setProductTypeFilter] = useState<string>("");
 

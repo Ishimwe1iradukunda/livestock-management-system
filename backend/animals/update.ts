@@ -1,6 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import db from "../db";
 import type { Animal } from "./create";
+import { logAuditEvent } from "../utils/audit_logger";
 
 export interface UpdateAnimalRequest {
   id: number;
@@ -20,7 +21,7 @@ export interface UpdateAnimalRequest {
 
 // Updates an existing animal record.
 export const update = api<UpdateAnimalRequest, Animal>(
-  { expose: true, method: "PUT", path: "/animals/:id" },
+  { auth: true, expose: true, method: "PUT", path: "/animals/:id" },
   async (params) => {
     const updates: string[] = [];
     const values: any[] = [];
@@ -68,6 +69,13 @@ export const update = api<UpdateAnimalRequest, Animal>(
     if (!row) {
       throw APIError.notFound("animal not found");
     }
+    
+    await logAuditEvent({
+      action: "update_animal",
+      resourceType: "animal",
+      resourceId: params.id.toString(),
+      details: { fieldsUpdated: Object.keys(params).filter(k => params[k as keyof UpdateAnimalRequest] !== undefined) },
+    });
     
     return {
       id: row.id,

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
-import backend from "~backend/client";
+import { useBackend } from "../hooks/useBackend";
 import type { Animal } from "~backend/animals/create";
 
 interface AnimalFormProps {
@@ -18,6 +18,7 @@ interface AnimalFormProps {
 }
 
 export default function AnimalForm({ animal, onSuccess, onCancel }: AnimalFormProps) {
+  const backend = useBackend();
   const { toast } = useToast();
   const isEditing = !!animal;
 

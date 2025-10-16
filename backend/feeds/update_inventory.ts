@@ -20,7 +20,7 @@ export interface FeedInventory {
 
 // Updates feed inventory settings.
 export const updateInventory = api<UpdateInventoryRequest, FeedInventory>(
-  { expose: true, method: "PUT", path: "/feeds/:feedId/inventory" },
+  { auth: true, expose: true, method: "PUT", path: "/feeds/:feedId/inventory" },
   async (params) => {
     const row = await db.queryRow<any>`
       UPDATE feed_inventory 
