@@ -3,7 +3,7 @@ import backend from "~backend/client";
 
 interface User {
   id: string;
-  email: string;
+  username: string;
   fullName: string | null;
   role: string;
 }
@@ -11,7 +11,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, pin: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -35,9 +35,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, pin: string) => {
     try {
-      const response = await backend.auth.login({ email, password });
+      const response = await backend.auth.login({ username, pin });
       setToken(response.token);
       setUser(response.user);
       localStorage.setItem("auth_token", response.token);

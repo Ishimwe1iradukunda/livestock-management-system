@@ -3,14 +3,14 @@ import db from "../db";
 import * as bcrypt from "bcryptjs";
 
 export interface RegisterRequest {
-  email: string;
-  password: string;
+  username: string;
+  pin: string;
   fullName?: string;
 }
 
 export interface RegisterResponse {
   id: string;
-  email: string;
+  username: string;
   fullName: string | null;
   role: string;
 }
@@ -18,36 +18,36 @@ export interface RegisterResponse {
 export const register = api<RegisterRequest, RegisterResponse>(
   { expose: true, method: "POST", path: "/auth/register" },
   async (req) => {
-    if (!req.email || !req.password) {
-      throw APIError.invalidArgument("email and password are required");
+    if (!req.username || !req.pin) {
+      throw APIError.invalidArgument("username and pin are required");
     }
 
-    if (req.password.length < 8) {
-      throw APIError.invalidArgument("password must be at least 8 characters");
+    if (!/^\d{4}$/.test(req.pin)) {
+      throw APIError.invalidArgument("pin must be exactly 4 digits");
     }
 
     const existingUser = await db.rawQueryRow<{ id: string }>(
-      `SELECT id FROM admin_users WHERE email = $1`,
-      req.email
+      `SELECT id FROM admin_users WHERE username = $1`,
+      req.username
     );
 
     if (existingUser) {
-      throw APIError.alreadyExists("user with this email already exists");
+      throw APIError.alreadyExists("user with this username already exists");
     }
 
-    const passwordHash = await bcrypt.hash(req.password, 10);
+    const pinHash = await bcrypt.hash(req.pin, 10);
 
     const newUser = await db.rawQueryRow<{
       id: string;
-      email: string;
+      username: string;
       full_name: string | null;
       role: string;
     }>(
-      `INSERT INTO admin_users (email, password_hash, full_name) 
+      `INSERT INTO admin_users (username, pin_hash, full_name) 
        VALUES ($1, $2, $3) 
-       RETURNING id, email, full_name, role`,
-      req.email,
-      passwordHash,
+       RETURNING id, username, full_name, role`,
+      req.username,
+      pinHash,
       req.fullName || null
     );
 
@@ -57,7 +57,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
     return {
       id: newUser.id,
-      email: newUser.email,
+      username: newUser.username,
       fullName: newUser.full_name,
       role: newUser.role,
     };

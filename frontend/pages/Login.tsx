@@ -8,8 +8,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [pin, setPin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(username, pin);
       toast({
         title: "Success",
         description: "Logged in successfully",
@@ -30,7 +30,7 @@ export default function Login() {
       console.error("Login error:", error);
       toast({
         title: "Error",
-        description: "Invalid email or password",
+        description: "Invalid username or PIN",
         variant: "destructive",
       });
     } finally {
@@ -44,31 +44,39 @@ export default function Login() {
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
           <CardDescription>
-            Enter your credentials to access the livestock management system
+            Enter your username and 4-digit PIN
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
+                autoComplete="username"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="pin">PIN</Label>
               <Input
-                id="password"
+                id="pin"
                 type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••"
+                value={pin}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                  setPin(value);
+                }}
                 required
+                maxLength={4}
+                inputMode="numeric"
+                pattern="\d{4}"
+                autoComplete="off"
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>

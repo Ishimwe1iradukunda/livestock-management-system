@@ -3,15 +3,15 @@ import db from "../db";
 import * as bcrypt from "bcryptjs";
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+  username: string;
+  pin: string;
 }
 
 export interface LoginResponse {
   token: string;
   user: {
     id: string;
-    email: string;
+    username: string;
     fullName: string | null;
     role: string;
   };
@@ -20,30 +20,34 @@ export interface LoginResponse {
 export const login = api<LoginRequest, LoginResponse>(
   { expose: true, method: "POST", path: "/auth/login" },
   async (req) => {
-    if (!req.email || !req.password) {
-      throw APIError.invalidArgument("email and password are required");
+    if (!req.username || !req.pin) {
+      throw APIError.invalidArgument("username and pin are required");
+    }
+
+    if (!/^\d{4}$/.test(req.pin)) {
+      throw APIError.invalidArgument("pin must be exactly 4 digits");
     }
 
     const adminUser = await db.rawQueryRow<{
       id: string;
-      email: string;
-      password_hash: string;
+      username: string;
+      pin_hash: string;
       full_name: string | null;
       role: string;
       is_active: boolean;
     }>(
-      `SELECT id, email, password_hash, full_name, role, is_active 
+      `SELECT id, username, pin_hash, full_name, role, is_active 
        FROM admin_users 
-       WHERE email = $1`,
-      req.email
+       WHERE username = $1`,
+      req.username
     );
 
     if (!adminUser || !adminUser.is_active) {
       throw APIError.unauthenticated("invalid credentials");
     }
 
-    const isValidPassword = await bcrypt.compare(req.password, adminUser.password_hash);
-    if (!isValidPassword) {
+    const isValidPin = await bcrypt.compare(req.pin, adminUser.pin_hash);
+    if (!isValidPin) {
       throw APIError.unauthenticated("invalid credentials");
     }
 
@@ -56,7 +60,7 @@ export const login = api<LoginRequest, LoginResponse>(
       token: adminUser.id,
       user: {
         id: adminUser.id,
-        email: adminUser.email,
+        username: adminUser.username,
         fullName: adminUser.full_name,
         role: adminUser.role,
       },
