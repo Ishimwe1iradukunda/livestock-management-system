@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -226,22 +226,22 @@ export default function AdvancedAnalyticsDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {analytics.topPerformers.slice(0, 5).map((performer, index) => (
-                    <div key={performer.animalId} className="flex items-center justify-between">
+                    <div key={performer.id} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="w-6 h-6 rounded-full p-0 flex items-center justify-center text-xs">
                           {index + 1}
                         </Badge>
                         <div>
-                          <div className="font-medium text-sm">#{performer.tagNumber}</div>
-                          <div className="text-xs text-muted-foreground">{performer.name || "Unnamed"}</div>
+                          <div className="font-medium text-sm">#{performer.tag_number}</div>
+                          <div className="text-xs text-muted-foreground">{formatCurrency(performer.totalRevenue)}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`font-medium text-sm ${getScoreColor(performer.performanceScore)}`}>
-                          {performer.performanceScore.toFixed(0)}
+                        <div className="font-medium text-sm text-green-600">
+                          {performer.totalProduction.toFixed(1)} units
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {performer.roi.toFixed(1)}% ROI
+                          {formatCurrency(performer.totalRevenue)}
                         </div>
                       </div>
                     </div>
@@ -360,21 +360,17 @@ export default function AdvancedAnalyticsDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {analytics.seasonalTrends.map((trend, index) => (
-                  <div key={index} className="grid grid-cols-4 gap-4 p-3 border rounded-lg">
+                  <div key={index} className="grid grid-cols-3 gap-4 p-3 border rounded-lg">
                     <div>
-                      <div className="text-sm font-medium">{trend.month}</div>
+                      <div className="text-sm font-medium">{trend.season}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Production</div>
-                      <div className="font-medium">{trend.production.toFixed(1)}</div>
+                      <div className="text-sm text-muted-foreground">Avg Production</div>
+                      <div className="font-medium">{trend.averageProduction.toFixed(1)}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">Revenue</div>
-                      <div className="font-medium text-green-600">{formatCurrency(trend.revenue)}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Costs</div>
-                      <div className="font-medium text-red-600">{formatCurrency(trend.costs)}</div>
+                      <div className="text-sm text-muted-foreground">Avg Revenue</div>
+                      <div className="font-medium text-green-600">{formatCurrency(trend.averageRevenue)}</div>
                     </div>
                   </div>
                 ))}
