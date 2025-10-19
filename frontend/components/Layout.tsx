@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className="pt-4 border-t border-border space-y-2">
           <div className="flex items-center space-x-2 px-3 py-2 text-sm text-muted-foreground">
             <User className="h-4 w-4" />
-            <span className="truncate">{user?.email}</span>
+            <span className="truncate">{user?.username}</span>
           </div>
           <Button
             onClick={handleLogout}

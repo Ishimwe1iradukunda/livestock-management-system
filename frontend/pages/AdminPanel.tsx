@@ -53,7 +53,7 @@ export default function AdminPanel() {
             {admins?.admins?.map((admin) => (
               <Card key={admin.id}>
                 <CardHeader>
-                  <CardTitle className="text-lg">{admin.email}</CardTitle>
+                  <CardTitle className="text-lg">{admin.username}</CardTitle>
                   <CardDescription>
                     {admin.fullName || "No name provided"}
                   </CardDescription>

@@ -4,7 +4,7 @@ import type { AuthData } from "./auth";
 
 export interface UserInfoResponse {
   id: string;
-  email: string;
+  username: string;
   fullName: string | null;
   role: string;
 }
@@ -15,7 +15,7 @@ export const me = api<void, UserInfoResponse>(
     const auth = getAuthData()! as AuthData;
     return {
       id: auth.userID,
-      email: auth.email,
+      username: auth.username,
       fullName: auth.fullName,
       role: auth.role,
     };

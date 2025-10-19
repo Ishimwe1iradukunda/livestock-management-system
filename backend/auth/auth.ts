@@ -9,7 +9,7 @@ interface AuthParams {
 
 export interface AuthData {
   userID: string;
-  email: string;
+  username: string;
   role: string;
   fullName: string | null;
 }
@@ -23,12 +23,12 @@ export const auth = authHandler<AuthParams, AuthData>(
 
     const adminUser = await db.rawQueryRow<{
       id: string;
-      email: string;
+      username: string;
       role: string;
       full_name: string | null;
       is_active: boolean;
     }>(
-      `SELECT id, email, role, full_name, is_active 
+      `SELECT id, username, role, full_name, is_active 
        FROM admin_users 
        WHERE id = $1 AND is_active = true`,
       token
@@ -40,7 +40,7 @@ export const auth = authHandler<AuthParams, AuthData>(
 
     return {
       userID: adminUser.id,
-      email: adminUser.email,
+      username: adminUser.username,
       role: adminUser.role,
       fullName: adminUser.full_name,
     };
